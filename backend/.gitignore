@@ -1,0 +1,47 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+*.db
+*.sqlite3
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual Environment
+env/
+venv/
+ENV/
+.venv/
+virtualenv/
+Virtualenv/
+
+# Configuration files
+*.env
+*.ini
+*.swp
+.idea/
+.vscode/
+
+# Static and media files (if not stored elsewhere)
+static/
+media/
+
+# Local settings
+local_settings.py
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
