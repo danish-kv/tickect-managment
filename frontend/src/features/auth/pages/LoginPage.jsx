@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Ticket, Mail, Lock, User, ArrowLeft, EyeOff, Eye } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { LoginThunk } from "../../redux/thunk/authThunk";
-import { showToast } from "../../utils/showToast";
+import { LoginThunk } from "../../../redux/thunk/authThunk";
+import { showToast } from "../../../utils/showToast";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
