@@ -27,3 +27,8 @@ export const fetchTicketDetails = async (id) => {
   const res = await api.get(`/api/tickets/${id}/`);
   return res.data;
 };
+
+export const fetchDashboard = async (d) => {
+  const res = await api.get(`/api/dashboard/`);
+  return res.data;
+};

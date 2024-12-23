@@ -119,3 +119,30 @@ class CommentsViewSet(ModelViewSet):
     def perform_create(self, serializer):
         print('user in perfrom create', self.request.user)
         serializer.save(user=self.request.user)
+
+
+class DashboardAPIView(APIView):
+    def get(self, request):
+        total_ticket = Ticket.objects.count()
+        total_open_ticket = Ticket.objects.filter(status='Open').count()
+        total_inprogress_ticket = Ticket.objects.filter(status='In-Progress').count()
+        total_resolved_ticket = Ticket.objects.filter(status='Resolved').count()
+
+        # Get the 5 most recent tickets and users
+        recent_ticket = Ticket.objects.all().order_by('-created_at')[:5]
+        recent_users = CustomUser.objects.all().order_by('-date_joined').exclude(is_superuser=True)[:5]
+
+        # Serialize the data
+        recent_ticket_data = TicketSerializer(recent_ticket, many=True).data
+        recent_users_data = UserSerializer(recent_users, many=True).data
+
+        data = {
+            'total_ticket': total_ticket,
+            'total_open_ticket': total_open_ticket,
+            'total_inprogress_ticket': total_inprogress_ticket,
+            'total_resolved_ticket': total_resolved_ticket,
+            'recent_ticket': recent_ticket_data,
+            'recent_users': recent_users_data
+        }
+
+        return Response(data)
