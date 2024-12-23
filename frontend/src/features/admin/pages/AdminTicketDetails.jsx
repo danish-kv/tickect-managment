@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Edit3,
-  Trash2,
-  User,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  UserPlus,
-  History,
-  MessageSquare,
-  Tag,
-} from "lucide-react";
+import { User } from "lucide-react";
 import useTicketDetails from "../../admin/hooks/useTicketDetails";
 import api from "../../../services/api";
 import { showToast } from "../../../utils/showToast";
-import { DateFormat } from "../../../utils/format";
 import AssignmentModal from "../components/AssignmentModal";
 import useUsers from "../hooks/useUsers";
 import TicketHeader from "../components/TicketHeader";
 import TicketDetails from "../components/TicketDetails";
 import Comments from "../components/Comments";
+import AdminHeader from "../components/AdminHeader";
 
 const AdminTicketDetails = () => {
   const { id } = useParams();
@@ -72,10 +60,12 @@ const AdminTicketDetails = () => {
     if (!newComment.trim()) return;
 
     try {
-      await api.post(`/api/tickets/${id}/comments/`, {
+      const res = await api.post("/api/comment/", {
         comment: newComment,
-        is_internal: true,
+        ticket: id,
       });
+      console.log(res);
+
       await getTicketDetails();
       setNewComment("");
       showToast(200, "Comment added successfully");
@@ -115,8 +105,6 @@ const AdminTicketDetails = () => {
     }
   };
 
-
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -126,83 +114,85 @@ const AdminTicketDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <TicketHeader
-          onBack={() => navigate('/admin/tickets')}
-          onEdit={() => setIsEditing(!isEditing)}
-          onDelete={handleDelete}
-          onAssign={() => setShowAssignModal(true)}
-          hasAssignee={!!ticketDetails.assigned_to}
-          isEditing={isEditing}
-        />
+    <>
+      <AdminHeader />
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <TicketHeader
+            onBack={() => navigate("/admin/tickets")}
+            onEdit={() => setIsEditing(!isEditing)}
+            onDelete={handleDelete}
+            onAssign={() => setShowAssignModal(true)}
+            hasAssignee={!!ticketDetails.assigned_to}
+            isEditing={isEditing}
+          />
 
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2">
-            <div className="bg-white rounded-lg shadow border">
-              <div className="p-6 border-b">
-                <TicketDetails
-                  ticket={ticketDetails}
-                  editForm={editForm}
-                  isEditing={isEditing}
-                  onEdit={handleEdit}
-                  onEditCancel={() => setIsEditing(false)}
-                  onFormChange={setEditForm}
+          <div className="grid grid-cols-3 gap-6">
+            <div className="col-span-2">
+              <div className="bg-white rounded-lg shadow border">
+                <div className="p-6 border-b">
+                  <TicketDetails
+                    ticket={ticketDetails}
+                    editForm={editForm}
+                    isEditing={isEditing}
+                    onEdit={handleEdit}
+                    onEditCancel={() => setIsEditing(false)}
+                    onFormChange={setEditForm}
+                  />
+                </div>
+                <Comments
+                  comments={ticketDetails.comments}
+                  newComment={newComment}
+                  onCommentChange={setNewComment}
+                  onAddComment={handleAddComment}
                 />
               </div>
-              <Comments
-                comments={ticketDetails.comments}
-                newComment={newComment}
-                onCommentChange={setNewComment}
-                onAddComment={handleAddComment}
-              />
             </div>
-          </div>
 
-
-          <div className="col-span-1">
-            <div className="bg-white rounded-lg shadow border p-6 space-y-6">
-              {/* Assigned To */}
-              <div>
-                <h2 className="text-lg font-medium mb-4">Assigned To</h2>
-                <div className="flex items-center gap-3">
-                  {ticketDetails.assigned_to ? (
-                    <>
-                      <div className="flex-shrink-0">
-                        {ticketDetails.assigned_user.profile ? (
-                          <img
-                            src={ticketDetails.assigned_user.profile}
-                            alt={ticketDetails.assigned_user.username}
-                            className="w-8 h-8 rounded-full"
-                          />
-                        ) : (
-                          <User className="w-8 h-8 p-1 bg-gray-200 rounded-full" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium capitalize">
-                          {ticketDetails.assigned_user.username}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-gray-500">No agent assigned</p>
-                  )}
+            <div className="col-span-1">
+              <div className="bg-white rounded-lg shadow border p-6 space-y-6">
+                {/* Assigned To */}
+                <div>
+                  <h2 className="text-lg font-medium mb-4">Assigned To</h2>
+                  <div className="flex items-center gap-3">
+                    {ticketDetails.assigned_to ? (
+                      <>
+                        <div className="flex-shrink-0">
+                          {ticketDetails.assigned_user.profile ? (
+                            <img
+                              src={ticketDetails.assigned_user.profile}
+                              alt={ticketDetails.assigned_user.username}
+                              className="w-8 h-8 rounded-full"
+                            />
+                          ) : (
+                            <User className="w-8 h-8 p-1 bg-gray-200 rounded-full" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium capitalize">
+                            {ticketDetails.assigned_user.username}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-gray-500">No agent assigned</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <AssignmentModal
+          showAssignModal={showAssignModal}
+          setShowAssignModal={setShowAssignModal}
+          selectedAgent={selectedAgent}
+          setSelectedAgent={setSelectedAgent}
+          availableAgents={users}
+          handleAssign={handleAssign}
+        />{" "}
       </div>
-      <AssignmentModal
-        showAssignModal={showAssignModal}
-        setShowAssignModal={setShowAssignModal}
-        selectedAgent={selectedAgent}
-        setSelectedAgent={setSelectedAgent}
-        availableAgents={users}
-        handleAssign={handleAssign}
-      />{" "}
-    </div>
+    </>
   );
 };
 

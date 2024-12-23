@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Ticket,
-  Filter,
   Plus,
   Search,
   Clock,
@@ -49,7 +48,7 @@ const TicketsPage = () => {
     try {
       const res = await api.post("/api/tickets/", ticketData);
       console.log(res);
-
+      await getTicket()
       showToast(200, "New Ticket added");
     } catch (error) {
       showToast(400, "Failed to create new Ticket");
@@ -58,18 +57,18 @@ const TicketsPage = () => {
 
   const getPriorityColor = (priority) => {
     const colors = {
-      high: "text-red-600 bg-red-50",
-      medium: "text-yellow-600 bg-yellow-50",
-      low: "text-green-600 bg-green-50",
+      High: "text-red-600 bg-red-50",
+      Medium: "text-yellow-600 bg-yellow-50",
+      Low: "text-green-600 bg-green-50",
     };
     return colors[priority] || "text-gray-600 bg-gray-50";
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      open: "text-blue-600 bg-blue-50",
-      "in-progress": "text-purple-600 bg-purple-50",
-      resolved: "text-green-600 bg-green-50",
+      Open: "text-blue-600 bg-blue-50",
+      "In-Progress": "text-purple-600 bg-purple-50",
+      Resolved: "text-green-600 bg-green-50",
     };
     return colors[status] || "text-gray-600 bg-gray-50";
   };
@@ -249,7 +248,7 @@ const TicketsPage = () => {
                         {ticket.assigned_to && (
                           <span className="flex items-center">
                             <UserCheck className="h-4 w-4 mr-1" />
-                            Assigned to: {ticket.assigned_to.username}
+                            Assigned to: {ticket.assigned_user.username}
                           </span>
                         )}
                       </div>

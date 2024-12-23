@@ -5,6 +5,7 @@ import useTicketDetails from "../../admin/hooks/useTicketDetails";
 import api from "../../../services/api";
 import { showToast } from "../../../utils/showToast";
 import { DateFormat } from "../../../utils/format";
+import { useSelector } from "react-redux";
 
 const TicketDetails = () => {
   const { id } = useParams();
@@ -18,8 +19,9 @@ const TicketDetails = () => {
     priority: "",
   });
 
-  const { ticketDetails, loading, errors, getTicketDetails } =
-    useTicketDetails(id);
+  const { ticketDetails, loading, getTicketDetails } = useTicketDetails(id);
+
+  const { userID } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (ticketDetails) {
@@ -127,22 +129,24 @@ const TicketDetails = () => {
             <ArrowLeft className="h-5 w-5" />
             <span>Back to Tickets</span>
           </button>
-          <div className="flex gap-2">
-            <button
-              onClick={handleStartEditing} // Changed from setIsEditing(!isEditing)
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <Edit3 className="h-4 w-4" />
-              <span>Edit</span>
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              <Trash2 className="h-4 w-4" />
-              <span>Delete</span>
-            </button>
-          </div>
+          {userID == ticketDetails?.user?.id && (
+            <div className="flex gap-2">
+              <button
+                onClick={handleStartEditing}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <Edit3 className="h-4 w-4" />
+                <span>Edit</span>
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow border">
