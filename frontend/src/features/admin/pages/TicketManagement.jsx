@@ -23,18 +23,18 @@ const TicketManagement = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      open: "bg-yellow-100 text-yellow-800",
-      "in-progress": "bg-blue-100 text-blue-800",
-      resolved: "bg-green-100 text-green-800",
+      Open: "bg-yellow-100 text-yellow-800",
+      'In-Progress' : "bg-blue-100 text-blue-800",
+      Resolved: "bg-green-100 text-green-800",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   const getPriorityColor = (priority) => {
     const colors = {
-      high: "bg-red-100 text-red-800",
-      medium: "bg-yellow-100 text-yellow-800",
-      low: "bg-green-100 text-green-800",
+      High: "bg-red-100 text-red-800",
+      Medium: "bg-yellow-100 text-yellow-800",
+      Low: "bg-green-100 text-green-800",
     };
     return colors[priority] || "bg-gray-100 text-gray-800";
   };
