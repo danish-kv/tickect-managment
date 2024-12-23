@@ -12,6 +12,10 @@ import UserManagement from "../features/admin/pages/UserManagement";
 import TicketManagement from "../features/admin/pages/TicketManagement";
 import AdminTicketDetails from "../features/admin/pages/AdminTicketDetails";
 import AdminLayout from "../features/admin/layout/AdminLayout";
+import Unauthorized from "../features/common/Unauthorized";
+import LandingPageProtection from "./protected/LandingPageProtection";
+import AuthProtection from "./protected/AuthProtection";
+import ProtectedRoute from "./protected/ProtectedRoute";
 
 const routes = createBrowserRouter([
   {
@@ -20,34 +24,34 @@ const routes = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LandingPage />,
+        element: <LandingPageProtection element={<LandingPage />} />,
       },
       {
         path: "/login",
-        element: <LoginPage />,
+        element: (
+          <AuthProtection element={<LoginPage />} redirectTo={"/tickets"} />
+        ),
       },
       {
         path: "/register",
-        element: <RegisterPage />,
+        element: (
+          <AuthProtection element={<RegisterPage />} redirectTo={"/tickets"} />
+        ),
       },
       {
         path: "/tickets",
-        element: <TicketsPage />,
+        element: <ProtectedRoute element={<TicketsPage />} role={"user"} />,
       },
       {
         path: "/tickets/:id",
-        element: <TicketDetails />,
+        element: <ProtectedRoute element={<TicketDetails />} role={"user"} />,
       },
     ],
   },
 
   {
     path: "admin/login",
-    element: <AdminLogin />,
-  },
-  {
-    path: "admin/login",
-    element: <AdminLogin />,
+    element: <AuthProtection element={<AdminLogin />} redirectTo={"/admin"} />,
   },
   {
     path: "admin",
@@ -55,25 +59,31 @@ const routes = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminDashboard />,
+        element: <ProtectedRoute element={<AdminDashboard />} role={"admin"} />,
       },
       {
         path: "users",
-        element: <UserManagement />,
+        element: <ProtectedRoute element={<UserManagement />} role={"admin"} />,
       },
       {
         path: "tickets",
-        element: <TicketManagement />,
+        element: (
+          <ProtectedRoute element={<TicketManagement />} role={"admin"} />
+        ),
       },
     ],
   },
   {
     path: "admin/tickets/:id",
-    element: <AdminTicketDetails />,
+    element: <ProtectedRoute element={<AdminTicketDetails />} role={"admin"} />,
   },
   {
     path: "*",
     element: <NotFound />,
+  },
+  {
+    path: "unauthorized",
+    element: <Unauthorized />,
   },
 ]);
 
