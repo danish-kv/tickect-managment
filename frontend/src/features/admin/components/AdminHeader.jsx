@@ -1,20 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { Ticket } from "lucide-react";
+import { Ticket, Menu } from "lucide-react";
 import { LogoutThunk } from "../../../redux/thunk/authThunk";
 
-const AdminHeader = () => {
+const AdminHeader = ({ onSidebarOpen }) => {
   const { userID } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
-  const handleLogout = () => {
-    dispatch(LogoutThunk());
-    navigate("/login");
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,36 +22,55 @@ const AdminHeader = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    dispatch(LogoutThunk());
+    navigate("/login");
+  };
+
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo and Title */}
-          <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
+      <div className="px-6">
+        <div className="flex h-16 items-center">
+          <button
+            onClick={onSidebarOpen}
+            className="mr-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
+          >
+            <span className="sr-only">Open sidebar</span>
+            <Menu className="h-6 w-6" />
+          </button>
+
+          <div className="flex items-center gap-2 lg:hidden">
             <Ticket className="h-8 w-8 text-blue-600" />
             <Link to="/" className="text-xl font-bold text-gray-900">
               TicketMate
             </Link>
           </div>
 
-          {/* User Section */}
-          <nav className="flex items-center space-x-4">
+          <div className="ml-auto">
             {userID ? (
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="focus:outline-none"
+                  className="flex items-center gap-3 focus:outline-none"
                 >
-                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:ring-2 hover:ring-blue-500 transition-all">
+                  <div
+                    className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 
+                    flex items-center justify-center text-white font-medium hover:ring-2 
+                    hover:ring-blue-300 transition-all"
+                  >
                     A
                   </div>
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
+                  <div
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 
+                    z-50 border border-gray-200"
+                  >
                     <button
                       onClick={handleLogout}
-                      className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                      className="block w-full px-4 py-2 text-left text-sm text-red-600 
+                        hover:bg-red-50 transition-colors"
                     >
                       Logout
                     </button>
@@ -71,7 +85,7 @@ const AdminHeader = () => {
                 Login
               </Link>
             )}
-          </nav>
+          </div>
         </div>
       </div>
     </header>
