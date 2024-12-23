@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Ticket, Clock, CheckCircle, BarChart, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import Header from "./Header";
+import { fetchLanding } from "../admin/services/adminServices";
 
 const LandingPage = () => {
   const [stats, setStats] = useState({
@@ -10,16 +10,16 @@ const LandingPage = () => {
   });
 
   useEffect(() => {
-
     const fetchStats = async () => {
       try {
-
+        const res = await fetchLanding();
+        console.log(res);
         setStats({
-          activeTickets: 150,
-          resolvedToday: 45,
+          activeTickets: res.active_ticket || 0,
+          resolvedToday: res.resolved_ticket || 0,
         });
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error("Error fetching stats==", error);
       }
     };
 
@@ -50,8 +50,9 @@ const LandingPage = () => {
                 </h1>
 
                 <p className="text-lg md:text-xl text-gray-600">
-                  Efficiently manage support tickets, track resolutions, and deliver
-                  exceptional customer service with our intelligent ticketing system.
+                  Efficiently manage support tickets, track resolutions, and
+                  deliver exceptional customer service with our intelligent
+                  ticketing system.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">

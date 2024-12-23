@@ -28,7 +28,12 @@ export const fetchTicketDetails = async (id) => {
   return res.data;
 };
 
-export const fetchDashboard = async (d) => {
+export const fetchDashboard = async () => {
   const res = await api.get(`/api/dashboard/`);
+  return res.data;
+};
+
+export const fetchLanding = async () => {
+  const res = await api.get(`/api/landing/`);
   return res.data;
 };
