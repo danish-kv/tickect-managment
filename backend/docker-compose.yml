@@ -1,0 +1,34 @@
+services:
+  ticket-web:
+    build: .
+    command: ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
+    volumes:
+      - .:/app
+      - ticket-media_volume:/app/media/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ticket-db
+    env_file:
+      - .env
+    networks:
+      - ticket-network
+
+  ticket-db:
+    image: postgres
+    volumes:
+      - ticket-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - ticket-network
+
+volumes:
+  ticket-db-data:
+  ticket-media_volume:
+
+networks:
+  ticket-network:
+    driver: bridge
