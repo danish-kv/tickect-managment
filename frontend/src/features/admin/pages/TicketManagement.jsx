@@ -128,11 +128,11 @@ const TicketManagement = () => {
                 <tr key={ticket.id}>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 capitalize">
                         {ticket.title}
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {ticket.description}
+                      <div className="text-sm text-gray-500 overflow-hidden whitespace-nowrap text-ellipsis">
+                      {ticket.description}
                       </div>
                       <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
