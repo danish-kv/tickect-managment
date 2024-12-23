@@ -6,23 +6,25 @@ const useTicket = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
 
-  const getTicket = async () => {
-    setLoading(false);
+  const getTicket = async (filters={}) => {
+    setLoading(true);
     try {
-      const data = await fetchTickets();
+      const data = await fetchTickets(filters);
+      console.log(data);
+      
       setTickets(data);
     } catch (error) {
       console.log(error);
       setErrors(error);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     getTicket()
   }, [])
-  return { tickets, loading, errors };
+  return { tickets, loading, errors, getTicket };
 };
 
 export default useTicket;

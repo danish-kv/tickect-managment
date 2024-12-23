@@ -6,11 +6,11 @@ const useUsers = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
 
-  const getUsers = async () => {
+  const getUsers = async (searchTerm='',statusFilter='all') => {
     setLoading(true);
     try {
-      const data = await fetchUsers();
-      console.log(res);
+      const data = await fetchUsers(searchTerm, statusFilter);
+      console.log(data);
       setUsers(data);
     } catch (error) {
       console.log(error);
