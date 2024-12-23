@@ -50,7 +50,7 @@ class RegisterSerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(required=False)
     class Meta:
         model = Comments
         fields = '__all__'
@@ -60,7 +60,7 @@ class CommentSerializer(ModelSerializer):
 class TicketSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     user = UserSerializer(required=False)
-    assigned_to = serializers.PrimaryKeyRelatedField(queryset=Ticket.objects.all(), required=False)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all(), required=False)
     assigned_user = UserSerializer(source='assigned_to', read_only=True)
     class Meta:
         model = Ticket
@@ -95,14 +95,8 @@ class TicketSerializer(ModelSerializer):
         return value
     
     def validate(self, data):
-        if data.get('assigned_to') and data['status'] == 'Open':
+        status = data.get('status')
+
+        if data.get('assigned_to') and status == 'Open':
             raise serializers.ValidationError("Tickets with Open status cannot be assigned to a user.")
         return data
-
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return Ticket.objects.all()
-        return Ticket.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)

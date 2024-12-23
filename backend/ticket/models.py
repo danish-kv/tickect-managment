@@ -7,15 +7,13 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, db_index=True)
     profile = models.ImageField(upload_to='profiles/', null=True, blank=True)
-    number = models.CharField(max_length=15, null=True, blank=True) 
-    otp = models.CharField(max_length=6, null=True, blank=True)
-    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
     
     class Meta:
         ordering = ['-id']
+
 
 class Ticket(models.Model):
     PRIORITY_STATUS = [

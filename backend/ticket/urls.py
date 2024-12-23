@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import UserViewSet, RegisterAPIView, TicketViewSet, Logout, CustomTokenObtainPairView, CommentsViewSet, DashboardAPIView
+from .views import UserViewSet, RegisterAPIView, TicketViewSet, Logout, CustomTokenObtainPairView, CommentsViewSet, DashboardAPIView,LandingPageAPIView
 from rest_framework.routers import DefaultRouter
 
 routers = DefaultRouter()
@@ -13,6 +13,7 @@ urlpatterns = [
     path('register/', RegisterAPIView.as_view(), name='register'),
     path('login/token/', CustomTokenObtainPairView.as_view(), name='token'),
     path('logout/', Logout.as_view(), name='logout'),
-    path('dashboard/', DashboardAPIView.as_view(), name='dashboard')
+    path('dashboard/', DashboardAPIView.as_view(), name='dashboard'),
+    path('landing/', LandingPageAPIView.as_view(), name='landing'),
 
 ]

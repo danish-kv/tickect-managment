@@ -13,7 +13,7 @@ from common.base_pagination import TicketPagination
 from django_filters import rest_framework as django_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import TicketFilter
-
+from django.db.models import Q
 
 
 class UserViewSet(ModelViewSet):
@@ -23,6 +23,7 @@ class UserViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['is_active']  
     search_fields = ['email', 'username']
+
 
 
 
@@ -101,14 +102,26 @@ class TicketViewSet(ModelViewSet):
     ordering_fields = ['priority', 'status']
 
 
-    def create(self, request, *args, **kwargs):
-        print(request.data)
-        print(request.user)
-        return super().create(request, *args, **kwargs)
-
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Ticket.objects.all()
+        return Ticket.objects.filter(Q(user=self.request.user) | Q(assigned_to=self.request.user))
+
+    def perform_update(self, serializer):
+        obj = self.get_object() 
+        if obj.user != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied("You do not have permission to edit this ticket.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        obj = self.get_object() 
+        if obj.user != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied("You do not have permission to delete this ticket.")
+        instance.delete()
+            
 
 class CommentsViewSet(ModelViewSet):
     queryset = Comments.objects.all()
@@ -145,4 +158,16 @@ class DashboardAPIView(APIView):
             'recent_users': recent_users_data
         }
 
+        return Response(data)
+
+
+class LandingPageAPIView(APIView):
+    def get(self, request):
+        active_ticket = Ticket.objects.filter(status='Open').count()
+        resolved_ticket = Ticket.objects.filter(status='Resolved').count()
+        data = {
+            "active_ticket" : active_ticket,
+            'resolved_ticket' : resolved_ticket
+
+        }
         return Response(data)
