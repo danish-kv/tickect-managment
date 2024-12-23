@@ -1,11 +1,12 @@
 from django.urls import path, include
-from .views import UserViewSet, RegisterAPIView, TicketViewSet, Logout, CustomTokenObtainPairView
+from .views import UserViewSet, RegisterAPIView, TicketViewSet, Logout, CustomTokenObtainPairView, CommentsViewSet
 from rest_framework.routers import DefaultRouter
 
 routers = DefaultRouter()
 
 routers.register(r'users', UserViewSet, basename='users')
-routers.register(r'ticket', TicketViewSet, basename='ticket')
+routers.register(r'tickets', TicketViewSet, basename='ticket')
+routers.register(r'comment', CommentsViewSet, basename='comment')
 
 urlpatterns = [
     path('', include(routers.urls)),

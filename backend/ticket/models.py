@@ -34,10 +34,20 @@ class Ticket(models.Model):
     status = models.CharField(max_length=15, choices=CURRENT_STATUS, default='Open')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tickets_created')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tickets_created', null=True)
     assigned_to = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='tickets_assigned'
     )
 
     def __str__(self):
         return f"Ticket: {self.title} ({self.status})"
+
+
+class Comments(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments', null=True)
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='comments')
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.ticket.title}"

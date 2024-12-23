@@ -1,13 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
-from .models import CustomUser, Ticket
-from .serializers import UserSerializer, TicketSerializer, RegisterSerializer
+from .models import CustomUser, Ticket, Comments
+from .serializers import UserSerializer, TicketSerializer, RegisterSerializer, CommentSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils.timezone import now
 
 
@@ -83,4 +83,23 @@ class Logout(APIView):
 class TicketViewSet(ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        print(request.user)
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class CommentsViewSet(ModelViewSet):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    
+    def perform_create(self, serializer):
+        print('user in perfrom create', self.request.user)
+        serializer.save(user=self.request.user)
