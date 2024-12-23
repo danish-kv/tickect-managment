@@ -2,19 +2,28 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from .models import CustomUser, Ticket, Comments
 from .serializers import UserSerializer, TicketSerializer, RegisterSerializer, CommentSerializer
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils.timezone import now
+from common.base_pagination import TicketPagination
+from django_filters import rest_framework as django_filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import TicketFilter
 
 
 
 class UserViewSet(ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().exclude(is_superuser=True)
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['is_active']  
+    search_fields = ['email', 'username']
+
 
 
 class RegisterAPIView(APIView):
@@ -79,11 +88,18 @@ class Logout(APIView):
 
 
 
-
 class TicketViewSet(ModelViewSet):
-    queryset = Ticket.objects.all()
+    queryset = Ticket.objects.select_related('user', 'assigned_to').all()
     serializer_class = TicketSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = TicketPagination
+    filter_backends = [
+        django_filters.DjangoFilterBackend,
+        filters.OrderingFilter
+    ]
+    filterset_class = TicketFilter
+    ordering_fields = ['priority', 'status']
+
 
     def create(self, request, *args, **kwargs):
         print(request.data)

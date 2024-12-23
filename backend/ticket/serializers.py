@@ -8,7 +8,7 @@ from .models import CustomUser, Ticket, Comments
 class UserSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = '__all__'
+        fields = ['username', 'last_login', 'id', 'email', 'date_joined', 'is_active']
 
 
 class RegisterSerializer(ModelSerializer):
@@ -50,6 +50,7 @@ class RegisterSerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Comments
         fields = '__all__'
@@ -58,6 +59,9 @@ class CommentSerializer(ModelSerializer):
 
 class TicketSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
+    user = UserSerializer(required=False)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=Ticket.objects.all(), required=False)
+    assigned_user = UserSerializer(source='assigned_to', read_only=True)
     class Meta:
         model = Ticket
         fields = '__all__'
