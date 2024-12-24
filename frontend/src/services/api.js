@@ -23,7 +23,7 @@ api.interceptors.request.use(
 const refreshToken = async (refresh) => {
   try {
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}token/refresh/`,
+      `${import.meta.env.VITE_API_URL}api/token/refresh/`,
       {
         refresh: refresh,
       }
@@ -40,7 +40,7 @@ api.interceptors.response.use(
   async (error) => {
     console.log("Response error:", error);
 
-    if (error.code === "ERR_NETWORK") {
+    if (error.code === "ERR_NETWORK" || error.status === 500) {
       showToast(400, "Server Error, Please try later");
       return Promise.reject(error);
     }

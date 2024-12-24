@@ -80,6 +80,7 @@ const AdminTicketDetails = () => {
     try {
       await api.patch(`/api/tickets/${id}/`, {
         assigned_to: selectedAgent,
+        status : 'In-Progress'
       });
       await getTicketDetails();
       setShowAssignModal(false);

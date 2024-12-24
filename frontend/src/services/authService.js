@@ -8,7 +8,7 @@ export const register = async (email, password, username) => {
       password,
       username,
     });
-    showToast(200, "User registered successfully!");
+    // showToast(200, "User registered successfully!");
     return response.data;
   } catch (error) {
     console.error("catch error signup ===>", error);
@@ -54,7 +54,7 @@ export const login = async ({ username, password, role }) => {
       const detail = error.response.data?.detail;
 
       if (status === 401) {
-        showToast(100, "Data not found given credentials");
+        showToast(200, "Data not found given credentials");
       } else {
         showToast("An unexpected error occurred.");
         showToast(status, detail);
